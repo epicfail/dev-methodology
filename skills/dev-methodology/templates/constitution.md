@@ -12,8 +12,8 @@ architectural decision states the balance of features / costs / ease of maintena
 alternative it discarded.
 
 ### II. BDD first, TDD inside (NON-NEGOTIABLE)
-Every story enters through Gherkin scenarios in Italian (`features/<area>/<story>.feature`,
-`# language: it`) run with `cucumber` at the public boundary of the system; external services are
+Every story enters through Gherkin scenarios in {{CONTENT_LANGUAGE}} (`features/<area>/<story>.feature`,
+`# language: {{GHERKIN_CODE}}`) run with `cucumber` at the public boundary of the system; external services are
 simulated. Scenarios are written and seen **failing** before the code. Inside, TDD
 red → green → refactor. A bug is fixed starting from a scenario that reproduces it. No merge with
 red scenarios or tests.
@@ -49,14 +49,14 @@ functions, and the macro only wires it.
 No Python code, wrapper or subprocess in the product. The installed development tooling (bmad
 scripts in `_bmad/` and `.claude/skills/`, run with `uv`) is outside this principle.
 
-### VIII. Code in English, comments in Italian
+### VIII. Code in English, comments in {{CONTENT_LANGUAGE}}
 Identifiers in English: types, functions, modules, files, variables, tests, tables and columns,
 enum values, API JSON fields, error codes, subcommands, environment variables, Cargo features,
 branches. Instructions for agents and the development tooling are in English too: `CLAUDE.md`,
-this constitution, project skills, git hooks and scripts. In Italian: code comments and rustdoc,
+this constitution, project skills, git hooks and scripts. In {{CONTENT_LANGUAGE}}: code comments and rustdoc,
 messages for the user, Gherkin text, specs, product documents (bmad, architecture, ADRs) and user
 docs. Names follow `docs/glossary.md`; a new concept is added there before it is used.
-The code is **thoroughly documented with rustdoc in Italian**: `//!` for every crate and module,
+The code is **thoroughly documented with rustdoc in {{CONTENT_LANGUAGE}}**: `//!` for every crate and module,
 `///` for every public item (purpose, invariants, errors, examples where useful), plain comments for
 the why of non-obvious choices. `missing_docs` is on and `cargo doc` must pass without warnings:
 the generated documentation is a product of the gate.

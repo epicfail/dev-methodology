@@ -2,7 +2,7 @@ use serde_json::Value;
 use std::collections::HashSet;
 use std::process::Command;
 
-// crate di I/O vietati nel dominio (constitution III): si aggiorna quando ne entra uno nuovo nel workspace
+// I/O crates forbidden in the domain (constitution III): update the list when a new one enters the workspace
 const FORBIDDEN: [&str; 4] = ["tokio", "sqlx", "reqwest", "axum"];
 
 #[test]
@@ -11,23 +11,23 @@ fn the_domain_does_not_depend_on_io_crates() {
         .args(["metadata", "--format-version", "1", "--locked"])
         .current_dir(env!("CARGO_MANIFEST_DIR"))
         .output()
-        .expect("cargo metadata non eseguibile");
+        .expect("cargo metadata failed");
     assert!(
         out.status.success(),
         "{}",
         String::from_utf8_lossy(&out.stderr)
     );
     let meta: Value = serde_json::from_slice(&out.stdout).unwrap();
-    let nodi = meta["resolve"]["nodes"].as_array().unwrap();
-    let root = nodi
+    let nodes = meta["resolve"]["nodes"].as_array().unwrap();
+    let root = nodes
         .iter()
         .find(|n| n["id"].as_str().unwrap().contains("{{DOMAIN_CRATE}}"))
-        .expect("{{DOMAIN_CRATE}} assente");
+        .expect("{{DOMAIN_CRATE}} missing");
     let mut seen = HashSet::new();
     let mut stack = vec![root];
     while let Some(n) = stack.pop() {
         for d in n["deps"].as_array().unwrap() {
-            // archi solo dev esclusi: kind null = normale/build
+            // dev-only edges skipped: kind null = normal/build
             if d["dep_kinds"]
                 .as_array()
                 .unwrap()
@@ -39,10 +39,10 @@ fn the_domain_does_not_depend_on_io_crates() {
             let name = d["name"].as_str().unwrap();
             assert!(
                 !FORBIDDEN.contains(&name),
-                "dipendenza vietata nel dominio: {name}"
+                "forbidden dependency in the domain: {name}"
             );
             if seen.insert(d["pkg"].as_str().unwrap().to_string()) {
-                stack.push(nodi.iter().find(|x| x["id"] == d["pkg"]).unwrap());
+                stack.push(nodes.iter().find(|x| x["id"] == d["pkg"]).unwrap());
             }
         }
     }

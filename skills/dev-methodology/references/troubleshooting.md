@@ -8,7 +8,7 @@ Lessons from earlier projects that no configuration file tells you. Look up the 
 |---|---|---|
 | `/tmp` full, RAM exhausted during a build | Cargo target on tmpfs | `CARGO_TARGET_DIR` on `/home`; delete the targets in `/tmp` |
 | Errors E0061/E0063, doctest E0460 or "migration N unknown to the binary" unrelated to your diff | two worktrees of the same workspace with the same `CARGO_TARGET_DIR`: the crates have the same hash and one uses the other's artifacts | one target folder per active worktree (e.g. `~/.cache/cargo-target-side`); the main checkout never uses a worktree's folder; `cargo clean -p <crate>` and retry |
-| `cargo metadata non eseguibile` (assertion message of `purity.rs`) after removing a worktree | test binary compiled in the worktree, with the `CARGO_MANIFEST_DIR` of the deleted folder | `touch crates/<domain>/tests/purity.rs` and run again |
+| `cargo metadata failed` (assertion message of `purity.rs`) after removing a worktree | test binary compiled in the worktree, with the `CARGO_MANIFEST_DIR` of the deleted folder | `touch crates/<domain>/tests/purity.rs` and run again |
 | `/home` disk full of builds | Cargo never deletes old builds | the pre-push empties the folder above `TARGET_CAP_GB`; when a worktree is removed, delete its target folder; `df -h /home` before long builds |
 | Commits landed on the wrong branch | a subagent writing in the same folder while the main session switches branch | `isolation: "worktree"` for every subagent that writes in parallel |
 

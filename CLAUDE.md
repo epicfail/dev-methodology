@@ -26,9 +26,9 @@ does and its dependencies: `README.md`.
 - **Placeholders.** Every `{{NAME}}` in a template appears in the table of `SKILL.md` with its
   destination, and every name in the table exists in a template. Check:
   `grep -rhoE '\{\{[A-Z_]+\}\}' skills/dev-methodology/templates | sort -u`.
-- **Language.** Everything in English. Italian appears only where the methodology prescribes it for
-  projects: Gherkin keywords in the examples, comments and messages of product code templates
-  (`templates/rust/purity.rs`).
+- **Language.** Everything in English. The language of what projects write for people is never
+  hard-coded: it is the `{{CONTENT_LANGUAGE}}` and `{{GHERKIN_CODE}}` placeholders, which the
+  bootstrap asks the user.
 - **Public data.** No personal names, emails, private project or client names, local paths of a
   specific machine, internal hosts or IPs. Before every commit:
   `git diff --cached | grep -niE '@[a-z0-9-]+\.[a-z]|/home/|192\.168\.'` finds nothing.

@@ -1,9 +1,9 @@
-# Code glossary (Italian → English)
+# Code glossary (domain term → identifier)
 
-Rule (constitution VIII): **identifiers in English**, comments in Italian. A new concept gets its
-row here before it is used.
+Rule (constitution VIII): **identifiers in English**, comments in {{CONTENT_LANGUAGE}}. A new
+concept gets its row here before it is used.
 
 ## Domain concepts
 
-| Italian | English |
+| Term ({{CONTENT_LANGUAGE}}) | Identifier (English) |
 |---|---|
