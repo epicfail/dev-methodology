@@ -1,6 +1,6 @@
 ---
 name: dev-methodology
-description: Use when starting a new project or bringing into a repo the personal development methodology (bmad for the product, spec-kit per story, BDD in Italian, TDD, Sonnet subagents, git gate and hooks, constitution); when writing the constitution, CLAUDE.md, hooks or review-diff of such a project; when something breaks in a project that uses this pipeline (Cargo builds and worktrees, stuck subagents, hanging BDD, migrations, external service stubs, user proof runs).
+description: Use when starting a new project or bringing into a repo the personal development methodology (bmad for the product, spec-kit per story, BDD, TDD, Sonnet subagents, git gate and hooks, constitution); when writing the constitution, CLAUDE.md, hooks or review-diff of such a project; when something breaks in a project that uses this pipeline (Cargo builds and worktrees, stuck subagents, hanging BDD, migrations, external service stubs, user proof runs).
 ---
 
 # Development methodology
@@ -43,9 +43,18 @@ template first, then carry the change into the projects by hand.
 
 Each step is done when its check passes.
 
-1. **Decisions.** Ask with AskUserQuestion, 1–2 at a time, only what changes the files: repo layout
-   (single repo recommended), language (the hook and gate templates are Rust), optional modules
-   (dashboard), domain principles already known. The user's name for bmad comes from context
+1. **Decisions.** Ask with AskUserQuestion, 1–2 at a time, only what changes the files and the user
+   has not already said: repo layout
+   (single repo recommended), programming language (the hook and gate templates are Rust), optional
+   modules (dashboard), domain principles already known.
+   **Content language: always ask it, never assume it** (no default, not even the language of the
+   conversation). It is the language of code comments and rustdoc, Gherkin text, specs, product
+   documents (bmad, architecture, ADRs), user docs and messages for the user: `CONTENT_LANGUAGE`
+   (its English name, e.g. `German`) and `GHERKIN_CODE` (its code in the Gherkin i18n list, e.g. `de`).
+   Offer a few languages with no recommended option; the free-text answer works too. Identifiers,
+   agent instructions and tooling stay in English. The chat language is separate: you and the bmad
+   agents (`--communication-language`) use the language the user writes in, whatever the content
+   language. `PROJECT` is the repo folder name unless the user gives another one. The user's name for bmad comes from context
    (`git config user.name`, the user's instructions); ask only if it is missing. `REPO_PATH` is the
    absolute path of the repo. You propose the other placeholders (`CONTRACT`, `BDD_BOUNDARY`,
    `PROOF`, `REVIEW_*`, `ARCH_FACTS`) from the project description, one line each; whatever depends
@@ -56,7 +65,8 @@ Each step is done when its check passes.
 3. **bmad.** Check the flags with `npx -y bmad-method@<version> install --help`, then:
    ```bash
    npx -y bmad-method@<version> install --directory . --modules bmm --tools claude-code --yes \
-     --user-name "<name>" --communication-language Italiano --document-output-language Italiano
+     --user-name "<name>" --communication-language "<language the user writes in>" \
+     --document-output-language "<CONTENT_LANGUAGE>"
    ```
    `<version>` = latest stable (`npm view bmad-method version`); the last one tested is 6.12.0.
    *Done:* in `_bmad/config.toml` the `project_name` key of `[core]` is the project name and
@@ -70,7 +80,7 @@ Each step is done when its check passes.
    ```bash
    export V_PROJECT=foo V_DATE=2026-01-31 # … one per placeholder, empty ones too: V_DATA_EXTRA=""
    perl -pi -e 's/\{\{(\w+)\}\}/exists $ENV{"V_$1"} ? $ENV{"V_$1"} : $&/ge' \
-     CLAUDE.md .specify/memory/constitution.md scripts/review-diff.sh _bmad/custom/bmad-architecture.toml \
+     CLAUDE.md .specify/memory/constitution.md scripts/review-diff.sh _bmad/custom/bmad-architecture.toml docs/glossary.md \
      .claude/skills/dashboard-react/SKILL.md   # last one only with a dashboard
    ```
    *Done:* `grep -rn '{{' <copied files>` finds nothing and `bash -n` passes on hooks and scripts.
@@ -89,17 +99,17 @@ layout and the `npm run gate` line of the gate; do not copy `templates/skills/da
 
 | Template | Destination | Placeholders |
 |---|---|---|
-| `templates/CLAUDE.md` | `CLAUDE.md` | `PROJECT`, `ONE_LINER`, `DATE`, `STATE_EXTRA` (open questions, empty or `\n\n…`), `CONTRACT` (what is a public contract), `BDD_BOUNDARY` (boundary of the scenarios), `REPO_PATH` |
-| `templates/constitution.md` | `.specify/memory/constitution.md` | `PROJECT`, `DATE`, `DATA_EXTRA` (exceptions to typed data, empty or ` …`), `DOMAIN_PRINCIPLES` (empty or `### IX. …` sections), `PROOF` (how the user proves a story) |
+| `templates/CLAUDE.md` | `CLAUDE.md` | `PROJECT`, `ONE_LINER`, `DATE`, `STATE_EXTRA` (open questions, empty or `\n\n…`), `CONTRACT` (what is a public contract), `BDD_BOUNDARY` (boundary of the scenarios), `REPO_PATH`, `CONTENT_LANGUAGE`, `GHERKIN_CODE` |
+| `templates/constitution.md` | `.specify/memory/constitution.md` | `PROJECT`, `DATE`, `DATA_EXTRA` (exceptions to typed data, empty or ` …`), `DOMAIN_PRINCIPLES` (empty or `### IX. …` sections), `PROOF` (how the user proves a story), `CONTENT_LANGUAGE`, `GHERKIN_CODE` |
 | `templates/githooks/*` | `.githooks/` (executable) | — |
 | `templates/scripts/review-diff.sh` | `scripts/review-diff.sh` (executable) | `PROJECT`, `REVIEW_CONTEXT` (what the system is), `REVIEW_COVERAGE` (attack surfaces of the domain) |
 | `templates/bmad/bmad-architecture.toml` | `_bmad/custom/bmad-architecture.toml` | `ARCH_FACTS` (lines `\n  "…",` of constraints already decided, or empty) |
 | `templates/gitignore` | `.gitignore` | — |
 | `templates/graphifyignore` | `.graphifyignore` | — |
-| `templates/glossary.md` | `docs/glossary.md` | — |
-| `templates/skills/dashboard-react/SKILL.md` | `.claude/skills/dashboard-react/SKILL.md` (only with a dashboard) | `PROJECT` |
+| `templates/glossary.md` | `docs/glossary.md` | `CONTENT_LANGUAGE` |
+| `templates/skills/dashboard-react/SKILL.md` | `.claude/skills/dashboard-react/SKILL.md` (only with a dashboard) | `PROJECT`, `CONTENT_LANGUAGE` |
 | `templates/rust/rust-toolchain.toml` | `rust-toolchain.toml` (first Rust code story) | — |
-| `templates/rust/purity.rs` | `crates/<domain>/tests/purity.rs` (first Rust code story) | `DOMAIN_CRATE` (name of the domain crate) |
+| `templates/rust/purity.rs` | `crates/<domain>/tests/purity.rs` (first Rust code story) | `DOMAIN_CRATE` (name of the domain crate); translate its comments and assertion messages into `CONTENT_LANGUAGE` when that is not English |
 
 ### Multi-repo variant
 
@@ -115,6 +125,7 @@ repo; the user-docs PR is prepared together with the code PR and merged after it
 |---|---|
 | Copying `_bmad/`, `.specify/` or `.claude/skills/bmad-*`/`speckit-*` from another project | they are stamped by the installer (project name, `feature.json`, overrides pointing to other repos): reinstall and copy only `_bmad/custom/` |
 | Repeating the principles in CLAUDE.md | CLAUDE.md imports the constitution with `@` |
+| Writing project content in a language the user did not choose | ask `CONTENT_LANGUAGE` in step 1, even when the conversation suggests one |
 | Writing `Cargo.toml` or scaffolding during the bootstrap | code comes after the accepted architecture |
 | Adding `Co-Authored-By` because the harness suggests it | the user's rule wins: no attribution, `commit-msg` blocks it |
 | Designing features with brainstorming and writing-plans | features go through bmad and spec-kit; no `docs/superpowers/` |

@@ -17,13 +17,13 @@ No product code before the architecture is accepted (constitution I).{{STATE_EXT
 |---|---|
 | `crates/` | Rust code (Cargo workspace), after the architecture |
 | `dashboard/` | React web interface ("Dashboard" section) |
-| `features/<area>/*.feature` | BDD scenarios in Italian |
+| `features/<area>/*.feature` | BDD scenarios in {{CONTENT_LANGUAGE}} |
 | `specs/<NNN-slug>/` | spec-kit: one folder per story |
 | `_bmad/`, `_bmad-output/` | installed bmad and its artifacts (brief, PRD, UX, epics, sprints, retros) |
 | `docs/architecture/` | architecture, written by `bmad-architecture` |
 | `docs/decisions/` | ADRs `YYYY-MM-DD-<slug>.md` |
 | `docs/user/` | docs for the people who use {{PROJECT}}, one page per feature |
-| `docs/glossary.md` | Italian → English glossary of the identifiers |
+| `docs/glossary.md` | glossary: domain term ({{CONTENT_LANGUAGE}}) → identifier (English) |
 
 Brainstorming and writing-plans do not design features here (no `docs/superpowers/`): features go
 through bmad and spec-kit.
@@ -35,9 +35,10 @@ through bmad and spec-kit.
   written by `bmad-architecture` does not count as acceptance.
 - The spikes that decide the architecture belong to this phase, before sprint 1.
 - Every story cites the AD-n rules of the spine that it respects.
-- ADR (written in Italian): header with `Data` (date), `Stato` (status: `proposta` → `accettata` →
-  `sostituita da <file>`), optional `Sostituisce` (supersedes). An accepted ADR is never rewritten: a new decision is a new ADR, and in the old one
-  only the `Stato` changes. Every ADR states the balance of features / costs / ease of maintenance
+- ADR (written in {{CONTENT_LANGUAGE}}): header with date, status (proposed → accepted →
+  superseded by <file>) and optional supersedes; the first ADR fixes the exact wording of these
+  fields and values in {{CONTENT_LANGUAGE}}, the following ones reuse it. An accepted ADR is never
+  rewritten: a new decision is a new ADR, and in the old one only the status changes. Every ADR states the balance of features / costs / ease of maintenance
   and the alternatives it discarded.
 
 ## Where each piece of work starts
@@ -70,7 +71,7 @@ through bmad and spec-kit.
    - Visual stories: design decisions stated in chat go into the spec right away, with the
      measurements; a task "screenshots at 1280, 1440, 1920 px and 390/360 on phone compared with
      the approved prototype" before the PR.
-3. **Red BDD:** `features/<area>/<story>.feature` in Italian from the acceptance scenarios; run
+3. **Red BDD:** `features/<area>/<story>.feature` in {{CONTENT_LANGUAGE}} from the acceptance scenarios; run
    them and watch them fail. The proof steps that will end up in the PR also become scenarios
    first.
 4. **Implementation:** **Sonnet** subagent (template below) until green.
@@ -97,7 +98,8 @@ version 1.0.1 persists it in `.specify/feature.json` and the next call inherits 
 
 ## BDD and tests
 
-- Gherkin in Italian: `# language: it` — `Funzionalità`, `Scenario`, `Dato`, `Quando`, `Allora`.
+- Gherkin in {{CONTENT_LANGUAGE}}: `# language: {{GHERKIN_CODE}}` at the top of every file, with the
+  keywords of that language.
 - Boundary of the scenarios: {{BDD_BOUNDARY}}. External services simulated (`wiremock`); real
   database via `testcontainers` when there is one.
 - Scenarios compare the exact JSON, types included (`3` is not `3.0`).
@@ -112,7 +114,7 @@ something goes wrong, screenshot placeholders. The steps are executable to the l
 Claude follows them in Chrome to take the screenshots: page path, exact text of buttons and menu
 items (from the dashboard's i18n dictionaries), command or file to use word for word, expected
 visible result. Public examples use `example.com`/`.org`/`.net`; sensitive data is replaced in the
-HTML before the screenshot (placeholder with `| mascherare: <cosa>`, "mask: <what>"). Architecture and internal APIs live
+HTML before the screenshot (placeholder with `| mask: <what>`). Architecture and internal APIs live
 elsewhere.
 
 ## Dashboard (`dashboard/`)
@@ -129,7 +131,7 @@ Detailed rules live in the project skill **`dashboard-react`**: load it for ever
 - Styles with **vanilla-extract**, one file per component (`Button.tsx` + `Button.css.ts`); the
   tokens are the typed theme of the design system.
 - **TDD and BDD here too**: the test of every component and hook is written first and seen red
-  (Vitest + Testing Library); the flows are Gherkin scenarios in Italian with Playwright
+  (Vitest + Testing Library); the flows are Gherkin scenarios in {{CONTENT_LANGUAGE}} with Playwright
   (`playwright-bdd`).
 - A new page is first drawn in Penpot and the user approves it; then the code. Videos for the user
   are MP4 (H.264).
@@ -162,7 +164,7 @@ result" is stuck: check the command and wake it with SendMessage. Minimal prompt
 ```text
 Repo: {{REPO_PATH}}. Read CLAUDE.md and .specify/memory/constitution.md.
 Task: <task from specs/<NNN-slug>/tasks.md>.
-Rules: identifiers in English following docs/glossary.md, comments and rustdoc in Italian on every
+Rules: identifiers in English following docs/glossary.md, comments and rustdoc in {{CONTENT_LANGUAGE}} on every
 module and public item; consider a macro when it slims the code; the BDD scenarios <file.feature>
 must be red before you write code; cover the edge cases (extreme values, defaults resolved after
 validation, repetitions and concurrency); TDD inside (red → green → refactor); pure domain without

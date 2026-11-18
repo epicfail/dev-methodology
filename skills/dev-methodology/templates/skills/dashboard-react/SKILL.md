@@ -41,9 +41,9 @@ Every area (card, list, chart, pill) handles loading, error and empty on its own
 disappears.
 
 - Loading: a `Skeleton` component shaped like the content, `aria-busy="true"` on the area and a
-  hidden text «Caricamento di …» ("Loading …"). Never a `<p>Caricamento…</p>` in place of the
+  hidden text from the i18n dictionary ("Loading …"). Never a `<p>Loading…</p>` in place of the
   page.
-- Error: a message in the area, with «Riprova» ("Retry") when it makes sense.
+- Error: a message in the area, with a retry button ("Retry", from the dictionary) when it makes sense.
 - Empty: one sentence that says what to do.
 
 ## 4. Components
@@ -84,7 +84,7 @@ disappears.
 - Vitest + Testing Library: the test of every component and hook is written and seen red before
   the code.
 - Storybook: light and dark stories for every state.
-- The flows are Gherkin scenarios in Italian in `dashboard/features/` (playwright-bdd), seen red
+- The flows are Gherkin scenarios in {{CONTENT_LANGUAGE}} in `dashboard/features/` (playwright-bdd), seen red
   first.
 - Closing: `npm run gate`, browser tests and screenshots green; the screenshots are compared with
   the Penpot boards at 1280, 1440, 1920 px and 390/360 on phone.

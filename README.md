@@ -2,7 +2,7 @@
 
 A Claude Code plugin that brings a spec-driven development methodology into a repository and keeps
 the agent on it: product work with **bmad**, one story at a time with **spec-kit**, **BDD scenarios
-in Italian written red before the code**, **TDD inside**, implementation delegated to **Sonnet
+written red before the code**, **TDD inside**, implementation delegated to **Sonnet
 subagents**, a **gate enforced by git hooks**, and a **project constitution** as the single source
 of the principles. It also fixes how the agent replies: action first, short, one question at a
 time, written for a reader with ADHD.
@@ -29,7 +29,7 @@ bmad (product)        brief → PRD → UX → architecture → epics and storie
                                          │
 spec-kit (per story)  specify → clarify → plan (Constitution Check) → tasks
                                          │
-BDD                   Italian Gherkin scenarios, run and seen red
+BDD                   Gherkin scenarios in the content language, run and seen red
                                          │
 implementation        Sonnet subagent, TDD inside, ponytail, until green
                                          │
@@ -43,7 +43,7 @@ The rules live in three places, each the only source for its topic:
 
 - **constitution** (`.specify/memory/constitution.md`): principles. Architecture before code, BDD
   first and TDD inside, pure hexagonal domain, tight boundaries, typed data, simplicity (ponytail
-  and macros), no Python, code in English with comments in Italian.
+  and macros), no Python, code in English with comments in the content language.
 - **`CLAUDE.md`**: the operating manual. Repo layout, ADRs, where each piece of work starts, the
   sprint pipeline, BDD, user docs, dashboard, ponytail, the subagent prompt, gate, git, builds,
   graphify, and how to reply and interact.
@@ -53,10 +53,11 @@ The rules live in three places, each the only source for its topic:
 
 ### Languages
 
-Identifiers, agent instructions (`CLAUDE.md`, constitution, skills) and tooling are in English.
-Code comments, rustdoc, Gherkin text, specs, product documents (bmad, architecture, ADRs), user
-docs and messages for the user are in Italian. To use another language, change principle VIII of
-the constitution template and the Gherkin rules in `templates/CLAUDE.md`.
+Identifiers, agent instructions (`CLAUDE.md`, constitution, skills) and tooling are always in
+English. Everything written for people (code comments, rustdoc, Gherkin text, specs, product
+documents such as bmad output, architecture and ADRs, user docs, messages for the user) is in the
+**content language**, which the skill asks during the bootstrap: there is no default. It fills the
+`{{CONTENT_LANGUAGE}}` and `{{GHERKIN_CODE}}` placeholders of the templates.
 
 ## Installation
 
