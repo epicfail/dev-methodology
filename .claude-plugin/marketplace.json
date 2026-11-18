@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "dev-methodology",
+  "description": "Spec-driven development methodology for Claude Code: bmad, spec-kit, BDD, TDD, git hooks and a project constitution.",
+  "owner": {
+    "name": "whitesheep",
+    "url": "https://github.com/whitesheep"
+  },
+  "plugins": [
+    {
+      "name": "dev-methodology",
+      "description": "Bootstrap and run a spec-driven development methodology (bmad, spec-kit, BDD, TDD, Sonnet subagents, git hooks, constitution).",
+      "source": "./",
+      "category": "development"
+    }
+  ]
+}
