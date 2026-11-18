@@ -37,7 +37,7 @@ through bmad and spec-kit.
 - Every story cites the AD-n rules of the spine that it respects.
 - ADR (written in Italian): header with `Data` (date), `Stato` (status: `proposta` → `accettata` →
   `sostituita da <file>`), optional `Sostituisce` (supersedes). An accepted ADR is never rewritten: a new decision is a new ADR, and in the old one
-  only the `Status` changes. Every ADR states the balance of features / costs / ease of maintenance
+  only the `Stato` changes. Every ADR states the balance of features / costs / ease of maintenance
   and the alternatives it discarded.
 
 ## Where each piece of work starts
