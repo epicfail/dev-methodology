@@ -1,6 +1,6 @@
 {
   "name": "dev-methodology",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Bootstrap and run a spec-driven development methodology: bmad for the product, spec-kit per story, BDD, TDD, Sonnet subagents, git hooks as gate, a project constitution and ADHD-friendly replies.",
   "author": {
     "name": "whitesheep",

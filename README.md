@@ -124,6 +124,7 @@ skills/dev-methodology/
     scripts/review-diff.sh  advisory security review run by pre-push
     bmad/                 bmad-architecture override
     skills/dashboard-react/ project skill for the React dashboard
+    skills/ui-design/     project skill for the look of every screen
     rust/                 rust-toolchain.toml and the domain purity test
     gitignore, graphifyignore, glossary.md
 ```
