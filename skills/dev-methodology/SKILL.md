@@ -38,6 +38,8 @@ template first, then carry the change into the projects by hand.
   `.claude/skills/dashboard-react/`; next to it goes `vercel-react-best-practices`, copied from
   `github.com/vercel-labs/agent-skills` (folder `skills/react-best-practices`) with an `ORIGIN.md`
   that records the commit and the license.
+- **Screens** (a site, a dashboard, mockups or design-tool boards): `templates/skills/ui-design/` becomes
+  the project skill `.claude/skills/ui-design/`, for the look of every screen and its copy.
 
 ## Bootstrap
 
@@ -81,7 +83,7 @@ Each step is done when its check passes.
    export V_PROJECT=foo V_DATE=2026-01-31 # … one per placeholder, empty ones too: V_DATA_EXTRA=""
    perl -pi -e 's/\{\{(\w+)\}\}/exists $ENV{"V_$1"} ? $ENV{"V_$1"} : $&/ge' \
      CLAUDE.md .specify/memory/constitution.md scripts/review-diff.sh _bmad/custom/bmad-architecture.toml docs/glossary.md \
-     .claude/skills/dashboard-react/SKILL.md   # last one only with a dashboard
+     .claude/skills/dashboard-react/SKILL.md .claude/skills/ui-design/SKILL.md   # only with a dashboard / with screens
    ```
    *Done:* `grep -rn '{{' <copied files>` finds nothing and `bash -n` passes on hooks and scripts.
 6. **Check.**
@@ -108,6 +110,7 @@ layout and the `npm run gate` line of the gate; do not copy `templates/skills/da
 | `templates/graphifyignore` | `.graphifyignore` | — |
 | `templates/glossary.md` | `docs/glossary.md` | `CONTENT_LANGUAGE` |
 | `templates/skills/dashboard-react/SKILL.md` | `.claude/skills/dashboard-react/SKILL.md` (only with a dashboard) | `PROJECT`, `CONTENT_LANGUAGE` |
+| `templates/skills/ui-design/SKILL.md` | `.claude/skills/ui-design/SKILL.md` (only with screens: site, dashboard, mockups) | `PROJECT` |
 | `templates/rust/rust-toolchain.toml` | `rust-toolchain.toml` (first Rust code story) | — |
 | `templates/rust/purity.rs` | `crates/<domain>/tests/purity.rs` (first Rust code story) | `DOMAIN_CRATE` (name of the domain crate); translate its comments and assertion messages into `CONTENT_LANGUAGE` when that is not English |
 

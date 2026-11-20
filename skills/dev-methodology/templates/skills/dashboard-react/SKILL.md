@@ -8,7 +8,8 @@ description: Project rules to write, review or change the React dashboard of {{P
 Project rules for `dashboard/`. They apply together with CLAUDE.md ("Dashboard" section) and the
 dashboard ADR in `docs/decisions/`. For React performance in general there is the
 `vercel-react-best-practices` skill: on conflicts these rules win (no Next.js, no SWR, no "server-"
-rule). The rules marked **[gate]** are checked by Biome in `npm run gate`.
+rule). The rules marked **[gate]** are checked by Biome in `npm run gate`. Colours, type, layout and copy of
+every screen follow the `ui-design` skill.
 
 ## 1. Navigation
 
