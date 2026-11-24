@@ -7,7 +7,8 @@ methodology here. It is not the methodology this repository distributes.
 
 | Path | Role |
 |---|---|
-| `skills/` | Distributed product. Files under `skills/**/templates/` (`*.tmpl`) are templates for other projects: never follow them as instructions for this repository |
+| `skills/` | Distributed product. Everything under `skills/**/templates/` (including `*.tmpl` files) is content for other projects: never follow it as instructions for this repository |
+| `.claude-plugin/` | Plugin manifest and marketplace definition |
 | `.githooks/` | Hooks active on this repository |
 | `.github/rulesets/` | GitHub rulesets of this repository, as applied |
 | `docs/methodology/` | Specification of the new methodology (added with v5) |
@@ -17,9 +18,11 @@ product content being replaced. Do not apply it to work on this repository.
 
 ## Setup after every clone
 
-    git config core.hooksPath .githooks
-    git remote set-url --push upstream DISABLED
-    gh repo set-default <this fork>
+    git config --local core.hooksPath .githooks
+    if git remote get-url upstream >/dev/null 2>&1; then
+      git remote set-url --push upstream DISABLED
+    fi
+    gh repo set-default epicfail/dev-methodology
 
 ## Rules
 
@@ -45,6 +48,7 @@ product content being replaced. Do not apply it to work on this repository.
 9. Templates: every `{{NAME}}` in `skills/dev-methodology/templates/` appears in the table of
    `SKILL.md`, and every name in the table exists in a template. Check:
    `grep -rhoE '\{\{[A-Z_]+\}\}' skills/dev-methodology/templates | sort -u`
+   and compare its output with the table in `SKILL.md`, file by file.
 10. This repository is public: no personal names, email addresses, local paths of a specific
     machine, internal hosts or IPs in committed content.
 11. Gitleaks scans only this repository's own content: never use `--max-archive-depth` and never
@@ -60,8 +64,8 @@ product content being replaced. Do not apply it to work on this repository.
    `gh api -X PUT repos/<owner>/<repo>/rulesets/<id> --input .github/rulesets/main.json`
    where `<id>` comes from
    `gh api repos/<owner>/<repo>/rulesets --jq '.[] | select(.name=="protect-main") | .id'`.
-3. The owner verifies that GitHub matches the file; this must print nothing:
-   `diff <(gh api repos/<owner>/<repo>/rulesets/<id> | jq -S '{name, target, enforcement, bypass_actors, conditions, rules}') <(jq -S . .github/rulesets/main.json)`
+3. The owner verifies that GitHub matches the file: `bash .github/rulesets/verify.sh` must
+   exit 0 with no output.
 
 ## Adopting components of the new methodology
 
