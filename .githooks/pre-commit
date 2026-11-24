@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Bootstrap pre-commit: no commits on main, secret scanning of staged changes. Fails closed.
+set -euo pipefail
+if [ "$(git branch --show-current)" = "main" ]; then
+  echo "pre-commit: direct commits to main are not allowed." >&2
+  exit 1
+fi
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "pre-commit: gitleaks not found. Install it, then commit again." >&2
+  exit 1
+fi
+exec gitleaks git --pre-commit --staged --redact --no-banner --verbose
