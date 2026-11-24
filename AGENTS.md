@@ -53,6 +53,16 @@ product content being replaced. Do not apply it to work on this repository.
     push, `git log --format='%an <%ae> | %cn <%ce>' origin/main..HEAD | sort -u` must show only
     that identity.
 
+## Changing the GitHub ruleset
+
+1. Open a PR that changes only `.github/rulesets/main.json`.
+2. After the merge, the owner (never an agent) applies it:
+   `gh api -X PUT repos/<owner>/<repo>/rulesets/<id> --input .github/rulesets/main.json`
+   where `<id>` comes from
+   `gh api repos/<owner>/<repo>/rulesets --jq '.[] | select(.name=="protect-main") | .id'`.
+3. The owner verifies that GitHub matches the file; this must print nothing:
+   `diff <(gh api repos/<owner>/<repo>/rulesets/<id> | jq -S '{name, target, enforcement, bypass_actors, conditions, rules}') <(jq -S . .github/rulesets/main.json)`
+
 ## Adopting components of the new methodology
 
 A component built here governs this repository only after the owner adopts it in a dedicated
