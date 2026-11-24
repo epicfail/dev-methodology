@@ -40,6 +40,7 @@ template first, then carry the change into the projects by hand.
   that records the commit and the license.
 - **Screens** (a site, a dashboard, mockups or design-tool boards): `templates/skills/ui-design/` becomes
   the project skill `.claude/skills/ui-design/`, for the look of every screen and its copy.
+  For both skills the copy drops the `.tmpl` suffix: `SKILL.md.tmpl` becomes `SKILL.md`.
 
 ## Bootstrap
 
