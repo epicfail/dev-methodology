@@ -18,7 +18,7 @@ template first, then carry the change into the projects by hand.
 ## How you work while using this skill
 
 - **Replies and interaction:** follow the "How to reply and interact" section of
-  [templates/CLAUDE.md](templates/CLAUDE.md) from the start, even before the project has its own
+  [templates/CLAUDE.md.tmpl](templates/CLAUDE.md.tmpl) from the start, even before the project has its own
   CLAUDE.md.
 - **Code, scripts, hooks and dependency choices:** load the `ponytail:ponytail` skill (level
   `full`) before writing, in every branch; this also applies to subagents, through their prompt. If
@@ -40,6 +40,7 @@ template first, then carry the change into the projects by hand.
   that records the commit and the license.
 - **Screens** (a site, a dashboard, mockups or design-tool boards): `templates/skills/ui-design/` becomes
   the project skill `.claude/skills/ui-design/`, for the look of every screen and its copy.
+  For both skills the copy drops the `.tmpl` suffix: `SKILL.md.tmpl` becomes `SKILL.md`.
 
 ## Bootstrap
 
@@ -75,7 +76,8 @@ Each step is done when its check passes.
    `.claude/skills/bmad-*` exist.
 4. **spec-kit.** `specify init --here --force --non-interactive --integration claude --script sh`
    (last version used: 1.0.1). *Done:* `.specify/` and `.claude/skills/speckit-*` exist.
-5. **Templates.** Copy according to the table and replace the placeholders. The constitution
+5. **Templates.** Copy according to the table and replace the placeholders. Drop the `.tmpl`
+   suffix in the copy: the Destination column has the final names. The constitution
    overwrites the spec-kit template. Substitute with one environment variable `V_<PLACEHOLDER>` per
    value (values with newlines are written `$'…\n…'`); list the files one by one, because zsh does
    not split `$files`:
@@ -101,7 +103,7 @@ layout and the `npm run gate` line of the gate; do not copy `templates/skills/da
 
 | Template | Destination | Placeholders |
 |---|---|---|
-| `templates/CLAUDE.md` | `CLAUDE.md` | `PROJECT`, `ONE_LINER`, `DATE`, `STATE_EXTRA` (open questions, empty or `\n\n…`), `CONTRACT` (what is a public contract), `BDD_BOUNDARY` (boundary of the scenarios), `REPO_PATH`, `CONTENT_LANGUAGE`, `GHERKIN_CODE` |
+| `templates/CLAUDE.md.tmpl` | `CLAUDE.md` | `PROJECT`, `ONE_LINER`, `DATE`, `STATE_EXTRA` (open questions, empty or `\n\n…`), `CONTRACT` (what is a public contract), `BDD_BOUNDARY` (boundary of the scenarios), `REPO_PATH`, `CONTENT_LANGUAGE`, `GHERKIN_CODE` |
 | `templates/constitution.md` | `.specify/memory/constitution.md` | `PROJECT`, `DATE`, `DATA_EXTRA` (exceptions to typed data, empty or ` …`), `DOMAIN_PRINCIPLES` (empty or `### IX. …` sections), `PROOF` (how the user proves a story), `CONTENT_LANGUAGE`, `GHERKIN_CODE` |
 | `templates/githooks/*` | `.githooks/` (executable) | — |
 | `templates/scripts/review-diff.sh` | `scripts/review-diff.sh` (executable) | `PROJECT`, `REVIEW_CONTEXT` (what the system is), `REVIEW_COVERAGE` (attack surfaces of the domain) |
@@ -109,8 +111,8 @@ layout and the `npm run gate` line of the gate; do not copy `templates/skills/da
 | `templates/gitignore` | `.gitignore` | — |
 | `templates/graphifyignore` | `.graphifyignore` | — |
 | `templates/glossary.md` | `docs/glossary.md` | `CONTENT_LANGUAGE` |
-| `templates/skills/dashboard-react/SKILL.md` | `.claude/skills/dashboard-react/SKILL.md` (only with a dashboard) | `PROJECT`, `CONTENT_LANGUAGE` |
-| `templates/skills/ui-design/SKILL.md` | `.claude/skills/ui-design/SKILL.md` (only with screens: site, dashboard, mockups) | `PROJECT` |
+| `templates/skills/dashboard-react/SKILL.md.tmpl` | `.claude/skills/dashboard-react/SKILL.md` (only with a dashboard) | `PROJECT`, `CONTENT_LANGUAGE` |
+| `templates/skills/ui-design/SKILL.md.tmpl` | `.claude/skills/ui-design/SKILL.md` (only with screens: site, dashboard, mockups) | `PROJECT` |
 | `templates/rust/rust-toolchain.toml` | `rust-toolchain.toml` (first Rust code story) | — |
 | `templates/rust/purity.rs` | `crates/<domain>/tests/purity.rs` (first Rust code story) | `DOMAIN_CRATE` (name of the domain crate); translate its comments and assertion messages into `CONTENT_LANGUAGE` when that is not English |
 
