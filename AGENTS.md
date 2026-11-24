@@ -47,7 +47,7 @@ product content being replaced. Do not apply it to work on this repository.
    the owner's explicit approval in the task.
 9. Templates: every `{{NAME}}` in `skills/dev-methodology/templates/` appears in the table of
    `SKILL.md`, and every name in the table exists in a template. Check:
-   `grep -rhoE '\{\{[A-Z_]+\}\}' skills/dev-methodology/templates | sort -u`
+   `grep -roE '\{\{[A-Z_]+\}\}' skills/dev-methodology/templates | sort -u`
    and compare its output with the table in `SKILL.md`, file by file.
 10. This repository is public: no personal names, email addresses, local paths of a specific
     machine, internal hosts or IPs in committed content.
