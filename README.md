@@ -118,7 +118,7 @@ skills/dev-methodology/
   references/
     troubleshooting.md    known failures: symptom, cause, fix
   templates/
-    CLAUDE.md             operating manual of a project
+    CLAUDE.md.tmpl        operating manual of a project
     constitution.md       principles of a project
     githooks/             pre-commit, commit-msg, pre-push, post-commit
     scripts/review-diff.sh  advisory security review run by pre-push
