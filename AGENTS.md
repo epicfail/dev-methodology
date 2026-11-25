@@ -12,6 +12,8 @@ methodology here. It is not the methodology this repository distributes.
 | `.githooks/` | Hooks active on this repository |
 | `.github/rulesets/` | GitHub rulesets of this repository, as applied |
 | `docs/methodology/` | Specification of the new methodology (added with v5) |
+| `docs/roadmap.md` | Planning source of truth (phases, status, reviews); non-normative, subordinate to the specification; read it when planning a session or closing a phase; never import it into always-loaded context |
+| `docs/audit/` | Phase records (inventories, capability matrices, test results); non-normative |
 
 The previous methodology (BMad, spec-kit, mandatory BDD, Rust hooks, review subagents) is
 product content being replaced. Do not apply it to work on this repository.
