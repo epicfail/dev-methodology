@@ -412,7 +412,7 @@ The control artifacts live in the same repository as the code they check: decisi
 
 **Integrity check details.** It is a job separate from those that build or run the PR's code; it uses a read-only token; it reads only the list of changed files, without running scripts, actions or dependencies from the PR. Its execution and acceptance derive from a trusted source: a PR cannot change the integrity check, suppress its required execution or substitute an unrelated successful result for it (for example, a job or a commit status with the same name). Where available, the ruleset requires the expected source of the check. Its correctness must be proven with PRs built specifically to try to replace it (Q9).
 
-**Declared limits.** The repository administrator can always bypass these protections; as long as the agent uses the user's credentials (7.8), so can the agent. On private repositories with GitHub Free, merge blocking is not available: checks report but do not block (6.4).
+**Declared limits.** An administrator is subject to an active ruleset unless granted applicable bypass permissions (tested in phase 1; phase-1 capability matrix, `docs/audit/github-free-capabilities.md`: P2, P6, P8, P9). The administrator can still modify the ruleset (tested: P8, P9) or remove it entirely (documented, not tested), thereby weakening or removing its protections. An agent that uses the user's credentials (7.8) has the same permissions as that user. On private repositories with GitHub Free, merge blocking is not available: checks report but do not block (6.4).
 
 ### 4.7 Architectural decisions
 
@@ -650,7 +650,7 @@ The minimum threshold admits no derogation. "Not verifiable" outcomes of test ve
 | Control | Result |
 | --- | --- |
 | Dependency policy | In applications: lockfile. In libraries: compatible constraints. Configurable waiting period per ecosystem; urgent security updates handled separately |
-| Main-branch protection | Merge only through PRs with passed checks, where the platform makes it available (6.4) |
+| Main-branch protection | Merge only through PRs with passed required checks, where the platform makes it available, the protection is active and no bypass permission applies (6.4) |
 
 **Controls specific to AI agents.**
 
@@ -668,23 +668,29 @@ The minimum threshold admits no derogation. "Not verifiable" outcomes of test ve
 | Step | Role | Public repository | Private repository |
 | --- | --- | --- | --- |
 | 1. Local hook before commit or push | Prevention, bypassable | Yes | Yes |
-| 2. Repository push protection, server side | Prevention: blocks the push; bypassable by whoever has write access, with an alert | To enable at bootstrap (off by default) | Not available without a paid plan |
+| 2. Repository push protection, server side | Prevention: can block pushes containing supported secrets; bypassable by whoever has write access, with an alert | Check at bootstrap, enable if off and verify the resulting state | Not available without a paid plan |
 | 3. Secret-scanning job in CI | Detection after the push: configured to run on every push to any branch and to scan all pushed commits, not just the final state | Mandatory | Mandatory: it is the only remote defense |
 | 4. Credential rotation | Remedy: work item with an owner and confirmation of revocation and replacement. Removing the secret from the code does not close the case | Yes | Yes |
 
-The step 3 job does not prevent anything: when it runs, the secret is already on GitHub. It finds secrets that escaped the hooks and triggers the rotation. In private repositories the monthly minutes included in GitHub Free should be enough for a short job (to be verified, Q9). Remote detection depends on the job being triggered, completing and covering the relevant commits and secret formats: a commit message containing a skip marker such as \[skip ci\] prevents push-triggered workflows, and private repositories can run out of minutes. A missing or incomplete run is never evidence that no secret was pushed: it is reported as incomplete coverage. The remedy for skip markers is chosen after the Q9 check.
+Repository push protection and push protection for users are distinct layers; the second is set per account. The repository's initial state is not assumed. In phase 1 the block was proven with both layers active, not with the repository layer alone (phase-1 capability matrix, `docs/audit/github-free-capabilities.md`: O4, E8–E10, P11, P12). The bypass with an alert is documented, not tested.
+
+The step 3 job does not prevent anything: when it runs, the secret is already on GitHub. It detects supported secrets that escaped the hooks and triggers the rotation. In private repositories it consumes the compute usage included in GitHub Free, a monthly monetary amount rather than a number of minutes: each job's time is rounded up to the whole minute, and without a valid payment method usage is blocked once the included amount is used up. These rules are documented; in phase 1 the usage amount shown on the billing page was consistent with the rounding per job, and the block was not tested (phase-1 capability matrix: E14–E19, V9). Remote detection depends on the job being triggered, completing and covering the relevant commits and secret formats: a commit message containing a skip marker such as \[skip ci\] prevents push-triggered workflows, and in private repositories the included compute usage can be used up. A missing or incomplete run is never evidence that no secret was pushed: it is reported as incomplete coverage. The remedy for skip markers is chosen after the Q9 check.
 
 **Other guarantees.**
 
 | Guarantee | Public repository | Private repository |
 | --- | --- | --- |
-| Required checks before merge | Available (branch protection or ruleset) | Not available: checks report, but merging remains possible |
-| Required code-owner review | Available | Not available |
+| Required checks before merge | Available; see the conditions below | Not available: checks report, but merging remains possible |
+| Required code-owner review | Available; see the single-account limitation below | Not available |
 | Vulnerable dependency alerts (Dependabot) | Available, to enable at bootstrap | Available, to enable at bootstrap |
 
-**Control status summary.** From the decisions file and the platform check, the bootstrap generates a summary of the controls that are **mandatory** (they block), **advisory** (they report) and **absent**. The summary is generated, not written by hand, and is referenced in PRs, so that no message presents an advisory control as mandatory.
+In phase 1, required checks blocked the merge on a public repository with an active ruleset and no applicable bypass permissions. Classic branch protection on a public repository was not tested; the expected source of required status checks was not pinned and remains a Q9 check (phase-1 capability matrix: P1, P5–P9, V1, V2, V6).
 
-**Consequence.** On a private repository with GitHub Free, the minimum threshold is guaranteed as bypassable local prevention plus remote detection, which depends on the job actually running, with mandatory rotation, and gates are reports: compliance depends on the discipline of whoever integrates. The document states this instead of attributing to these controls a guarantee they do not have.
+With a single account acting as both PR author and sole code owner, required code-owner review did not block the merge with zero required approvals. With one required approval, the merge was blocked by the approval requirement, and self-approval was refused. In the configurations tested, the owner's review remains a process step rather than a server-enforced approval (6.3; phase-1 capability matrix: P10). Enforcement with multiple accounts was not tested.
+
+**Control status summary.** After changing a protection setting, the bootstrap reads the effective state back: a successful request is not evidence that the protection is active (phase-1 capability matrix: V7). From the decisions file and the platform check, the bootstrap generates a summary of the controls that are **blocking**, **advisory** (they report but do not block) and **absent**. Whether a control blocks is distinct from whether the methodology makes it mandatory. The summary is generated, not written by hand, and is referenced in PRs, so that no message presents an advisory control as blocking.
+
+**Consequence.** On a private repository with GitHub Free, the minimum threshold requires bypassable local prevention plus remote detection, which depends on the job actually running, and mandatory rotation; gates are reports: compliance depends on the discipline of whoever integrates. The document states this instead of attributing to these controls a guarantee they do not have.
 
 ## 7. AI agents and tool independence
 
@@ -852,7 +858,7 @@ The example applies the rules of sections 3 and 6.3; the factor values are plaus
 - installs the local hooks and the CI secret-scanning job, which runs on every push to any branch;
 - enables Dependabot alerts;
 - records that branch protection, push protection and merge blocking are not available;
-- generates the summary: no mandatory server-side control; advisory: the secrets job and the alerts; absent: branch protection, push protection and merge blocking;
+- generates the summary: no blocking server-side control; advisory: the secrets job and the alerts; absent: branch protection, push protection and merge blocking;
 - shows a warning: the agent works with credentials that give access to banking data (7.8).
 
 **Changes in variant B (intermediate profile, public repository).**
@@ -890,7 +896,7 @@ Three questions remain open: Q9, Q12 and Q16. Q17 and Q18, left in draft by v5, 
 | Q6 | Work cadence | Closed (v2, v3) | 5.3 |
 | Q7 | Default technology stack | Closed (v3): optional tech packages | 5.2 |
 | Q8 | CI in the light profile | Closed (v4): minimum secret-scanning job mandatory in every repository | 5.4, 6.4 |
-| Q9 | Tool checks, by priority: actual GitHub Free capabilities on public and private repositories (branch protection, push protection, bypasses, CODEOWNERS, GitHub Actions minutes); test verification in the first pilot's stack; loading of AGENTS.md and skills in Claude Code and Codex; AI credential formats recognized by scanners; Dependabot alerts on private repositories; integrity check security against PRs built to replace it; skip markers such as \[skip ci\] on the secret-scanning job; skipped or failed jobs and the always-evaluated gate result; expected source of required status checks | **Open** (verification activity). Partly done in stage 0: on a public repository, a ruleset without bypass actors rejects direct pushes to main, including the owner's | 4.6, 5.2, 6.1, 6.2, 6.4, 7 |
+| Q9 | Tool checks, by priority: actual GitHub Free capabilities on public and private repositories (branch protection, push protection, bypasses, CODEOWNERS, GitHub Actions included compute usage and billing); test verification in the first pilot's stack; loading of AGENTS.md and skills in Claude Code and Codex; AI credential formats recognized by scanners; Dependabot alerts on private repositories; integrity check security against PRs built to replace it; skip markers such as \[skip ci\] on the secret-scanning job; skipped or failed jobs and the always-evaluated gate result; expected source of required status checks | **Open** (verification activity). Partly done in stage 0: on a public repository, a ruleset without bypass actors rejects direct pushes to main, including the owner's | 4.6, 5.2, 6.1, 6.2, 6.4, 7 |
 | Q10 | Roles in a team | Closed (v3); authorizations approved in v5 | 4.1 |
 | Q11 | Content language | Closed (v3) | 5.4 |
 | Q12 | Licence | **Open**: to be clarified with the author of the original methodology, starting now and in parallel; it does not block v5 | — |
