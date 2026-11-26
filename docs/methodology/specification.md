@@ -623,7 +623,7 @@ The minimum threshold admits no derogation. "Not verifiable" outcomes of test ve
 
 | Area | What it checks | When | Outcome | Example tools |
 | --- | --- | --- | --- | --- |
-| Secrets | Credentials of the types supported by the tool, including AI service credentials. It does not prove the absence of every secret | Local hooks; push (server side, where available); CI job on every push | See the chain in 6.4 | gitleaks; platform push protection |
+| Secrets | Credentials of the types supported by the tool, including AI service credentials. It does not prove the absence of every secret | Local hooks; push (server side, where available); push-triggered CI job (coverage limits in 6.4) | See the chain in 6.4 | gitleaks; platform push protection |
 | Dependencies (SCA) | Known vulnerabilities in libraries | Before merge (gate) and periodically (notification) | Gate: blocks on critical or high severity with a fix available. Notification: opens a work item | OSV-Scanner, Trivy, Dependency-Track; Dependabot alerts |
 | Dependency licences | Licences incompatible with the project | PR | Blocks if on the exclusion list | Dependency-Track, Trivy |
 | SAST | Vulnerabilities in the code | PR | Blocks on new code | SonarQube, Semgrep |
@@ -669,12 +669,24 @@ The minimum threshold admits no derogation. "Not verifiable" outcomes of test ve
 | --- | --- | --- | --- |
 | 1. Local hook before commit or push | Prevention, bypassable | Yes | Yes |
 | 2. Repository push protection, server side | Prevention: can block pushes containing supported secrets; bypassable by whoever has write access, with an alert | Check at bootstrap, enable if off and verify the resulting state | Not available without a paid plan |
-| 3. Secret-scanning job in CI | Detection after the push: configured to run on every push to any branch and to scan all pushed commits, not just the final state | Mandatory | Mandatory: it is the only remote defense |
+| 3. Secret-scanning job in CI | Detection after the push: configured for all branch pushes and pushes of tags pointing to commits; scans the project-relevant commit history, not just the final state | Mandatory | Mandatory: it is the only remote defense |
 | 4. Credential rotation | Remedy: work item with an owner and confirmation of revocation and replacement. Removing the secret from the code does not close the case | Yes | Yes |
 
 Repository push protection and push protection for users are distinct layers; the second is set per account. The repository's initial state is not assumed. In phase 1 the block was proven with both layers active, not with the repository layer alone (phase-1 capability matrix, `docs/audit/github-free-capabilities.md`: O4, E8–E10, P11, P12). The bypass with an alert is documented, not tested.
 
-The step 3 job does not prevent anything: when it runs, the secret is already on GitHub. It detects supported secrets that escaped the hooks and triggers the rotation. In private repositories it consumes the compute usage included in GitHub Free, a monthly monetary amount rather than a number of minutes: each job's time is rounded up to the whole minute, and without a valid payment method usage is blocked once the included amount is used up. These rules are documented; in phase 1 the usage amount shown on the billing page was consistent with the rounding per job, and the block was not tested (phase-1 capability matrix: E14–E19, V9). Remote detection depends on the job being triggered, completing and covering the relevant commits and secret formats: a commit message containing a skip marker such as \[skip ci\] prevents push-triggered workflows, and in private repositories the included compute usage can be used up. A missing or incomplete run is never evidence that no secret was pushed: it is reported as incomplete coverage. The remedy for skip markers is chosen after the Q9 check.
+The step 3 job does not prevent anything: when it runs, the secret is already on GitHub. It detects supported secrets that escaped the hooks and triggers the rotation. In private repositories it consumes the compute usage included in GitHub Free, a monthly monetary amount rather than a number of minutes: each job's time is rounded up to the whole minute, and without a valid payment method usage is blocked once the included amount is used up. These rules are documented; in phase 1 the usage amount shown on the billing page was consistent with the rounding per job, and the block was not tested (phase-1 capability matrix: E14–E19, V9).
+
+**Scan coverage.** The push-triggered secret-scanning job scans the project-relevant commit history reachable from the commit associated with the push event, not only the commits between the previous and the new tip. In a fork, the declared upstream history is excluded; the project's own changes remain in scope. Intermediate commits and changes introduced by merge commits are included. The implementation and its coverage must be verified in phase 4 (Q9).
+
+**Skip markers.** Skip instructions in commit messages are not allowed. The local pre-push hook checks the project-relevant commits introduced by the pushed refs and their new tips. It may reject markers in cases where GitHub would not skip the workflow. The commit-message hook provides earlier feedback but is not sufficient: some Git operations create commits without invoking it. Both hooks remain bypassable.
+
+Skip markers can also enter commit messages generated by GitHub when integrating a pull request. The gate checks the PR metadata used to compose these messages. The person integrating the PR checks the final commit message before merging. The latter is a process requirement, not a server-enforced guarantee. On private repositories with GitHub Free, the gate reports but does not block merging. A skip marker on the head commit of a pull request also prevents `pull_request` workflows, the gate included: in phase 1, on a public repository, the required check stayed expected and blocked the merge (phase-1 skip-marker record, `docs/audit/skip-markers.md`: Q1, Q2); on a private repository the case was not tested, and no server-side control would report it.
+
+**Declared coverage limits.** Remote detection depends on the workflow being present, triggered and completed, and on the scanner covering the relevant commits and secret formats. Skip markers can prevent a workflow from starting without producing a workflow run or check suite, as observed in phase 1 (phase-1 skip-marker record: K2–K8, K12, Q4, W1). In private repositories, the included compute usage can also be exhausted.
+
+A commit missed by one run can be covered by a later successful scan only if it is included in that scan's history. A branch deletion, a history rewrite or the absence of a subsequent scan can leave a previously pushed commit unscanned.
+
+A missing or incomplete run is never evidence that no secret was pushed. When detected, incomplete coverage is reported as such. Missing runs may remain undetected. The first version does not guarantee detection of every missed push.
 
 **Other guarantees.**
 
@@ -690,7 +702,7 @@ With a single account acting as both PR author and sole code owner, required cod
 
 **Control status summary.** After changing a protection setting, the bootstrap reads the effective state back: a successful request is not evidence that the protection is active (phase-1 capability matrix: V7). From the decisions file and the platform check, the bootstrap generates a summary of the controls that are **blocking**, **advisory** (they report but do not block) and **absent**. Whether a control blocks is distinct from whether the methodology makes it mandatory. The summary is generated, not written by hand, and is referenced in PRs, so that no message presents an advisory control as blocking.
 
-**Consequence.** On a private repository with GitHub Free, the minimum threshold requires bypassable local prevention plus remote detection, which depends on the job actually running, and mandatory rotation; gates are reports: compliance depends on the discipline of whoever integrates. The document states this instead of attributing to these controls a guarantee they do not have.
+**Consequence.** On a private repository with GitHub Free, the minimum threshold requires bypassable local prevention plus remote detection, subject to the declared coverage limits above, and mandatory rotation; gates are reports: compliance depends on the discipline of whoever integrates. The document states this instead of attributing to these controls a guarantee they do not have.
 
 ## 7. AI agents and tool independence
 
@@ -855,7 +867,7 @@ The example applies the rules of sections 3 and 6.3; the factor values are plaus
 
 **Bootstrap of variant C, private repository.** The methodology recommends the rigorous profile. The owner adopts the light profile and records the justification and the accepted risk. The gap protects less than it seems: every change that alters the handling of banking data has M2 = sensitive, so its effective level is rigorous anyway. The owner keeps secret scanning (mandatory) and excludes .env from the agents' reading. The bootstrap:
 
-- installs the local hooks and the CI secret-scanning job, which runs on every push to any branch;
+- installs the local hooks and configures the push-triggered CI secret-scanning job, with the coverage and limits defined in 6.4;
 - enables Dependabot alerts;
 - records that branch protection, push protection and merge blocking are not available;
 - generates the summary: no blocking server-side control; advisory: the secrets job and the alerts; absent: branch protection, push protection and merge blocking;
@@ -896,7 +908,7 @@ Three questions remain open: Q9, Q12 and Q16. Q17 and Q18, left in draft by v5, 
 | Q6 | Work cadence | Closed (v2, v3) | 5.3 |
 | Q7 | Default technology stack | Closed (v3): optional tech packages | 5.2 |
 | Q8 | CI in the light profile | Closed (v4): minimum secret-scanning job mandatory in every repository | 5.4, 6.4 |
-| Q9 | Tool checks, by priority: actual GitHub Free capabilities on public and private repositories (branch protection, push protection, bypasses, CODEOWNERS, GitHub Actions included compute usage and billing); test verification in the first pilot's stack; loading of AGENTS.md and skills in Claude Code and Codex; AI credential formats recognized by scanners; Dependabot alerts on private repositories; integrity check security against PRs built to replace it; skip markers such as \[skip ci\] on the secret-scanning job; skipped or failed jobs and the always-evaluated gate result; expected source of required status checks | **Open** (verification activity). Partly done in stage 0: on a public repository, a ruleset without bypass actors rejects direct pushes to main, including the owner's | 4.6, 5.2, 6.1, 6.2, 6.4, 7 |
+| Q9 | Tool checks, by priority: actual GitHub Free capabilities on public and private repositories (branch protection, push protection, bypasses, CODEOWNERS, GitHub Actions included compute usage and billing); test verification in the first pilot's stack; loading of AGENTS.md and skills in Claude Code and Codex; AI credential formats recognized by scanners; Dependabot alerts on private repositories; integrity check security against PRs built to replace it; skip markers such as \[skip ci\] on the secret-scanning job; commit coverage of the secret-scanning job; skipped or failed jobs and the always-evaluated gate result; expected source of required status checks | **Open** (verification activity). Partly done in stage 0: on a public repository, a ruleset without bypass actors rejects direct pushes to main, including the owner's | 4.6, 5.2, 6.1, 6.2, 6.4, 7 |
 | Q10 | Roles in a team | Closed (v3); authorizations approved in v5 | 4.1 |
 | Q11 | Content language | Closed (v3) | 5.4 |
 | Q12 | Licence | **Open**: to be clarified with the author of the original methodology, starting now and in parallel; it does not block v5 | — |
