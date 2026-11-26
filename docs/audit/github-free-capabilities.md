@@ -6,7 +6,7 @@
 | Test repositories | `epicfail/dm-test-public` (public), `epicfail/dm-test-private` (private), owned by a personal account on GitHub Free |
 | Reference specification | `docs/methodology/specification.md`, v5.1, §4.6 and §6.4 |
 | Tools | `gh` 2.102.0, `git` 2.56.1 |
-| Status | Test protocol approved by the owner on 2026-11-25. Tests completed on 2026-11-25; the billing page reading for V9 is pending |
+| Status | Test protocol approved by the owner on 2026-11-25. Tests completed on 2026-11-25; billing page read for V9 on 2026-11-26 |
 | Normative status | Non-normative |
 
 The record states what the platform does for the account and the date of the tests. GitHub can change its plans and defaults: a result is valid at its date only.
@@ -35,7 +35,7 @@ Read-only, 2026-11-25.
 
 ## Documented expectations
 
-Read on 2026-11-25. The pages show no last-updated date. Every quoted string was matched against the page text on that date.
+E1–E13 read on 2026-11-25, E14–E19 on 2026-11-26. The pages show no last-updated date. Every quoted string was matched against the page text on the date of reading.
 
 | # | Statement | Source |
 |---|---|---|
@@ -45,13 +45,19 @@ Read on 2026-11-25. The pages show no last-updated date. Every quoted string was
 | E4 | `deletion`: "only users with bypass permissions can delete branches or tags whose name matches the pattern"; `non_fast_forward` blocks force pushes; `pull_request` requires changes through a pull request, optionally with approvals and code-owner review; `required_status_checks` identifies a check by `context`, with `integration_id` optional | [Available rules for rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets), [REST: rules](https://docs.github.com/en/rest/repos/rules) |
 | E5 | "Pull request authors cannot approve their own pull requests." | [Approving a pull request with required reviews](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/approving-a-pull-request-with-required-reviews) |
 | E6 | `CODEOWNERS` lives in `.github/`, the root or `docs/`, and must be on the base branch of the pull request. Whether an author who is also the code owner gets a review request is not stated | [About code owners](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners) |
-| E7 | Standard GitHub-hosted runners are free in public repositories. GitHub Free includes a monthly amount for private repositories "expressed as a monetary amount, not a fixed number of minutes" (USD 12). Rounding of job time is not stated. The billing dashboard "may show your Actions usage as a dollar amount" | [About billing for GitHub Actions](https://docs.github.com/en/billing/managing-billing-for-your-products/managing-billing-for-github-actions/about-billing-for-github-actions) |
+| E7 | Standard GitHub-hosted runners are free in public repositories. GitHub Free includes a monthly amount for private repositories "expressed as a monetary amount, not a fixed number of minutes" (USD 12). Rounding of job time is not stated on this page (see E16). The billing dashboard "may show your Actions usage as a dollar amount" | [About billing for GitHub Actions](https://docs.github.com/en/billing/managing-billing-for-your-products/managing-billing-for-github-actions/about-billing-for-github-actions); on 2026-11-26 this URL redirects to the E14 page |
 | E8 | Changelog of 2024-03-11: "All new public repositories owned by personal accounts will now have secret scanning and push protection enabled by default." "Existing public repositories are not affected, nor are new public repositories that belong to an organization." | [GitHub changelog, 2024-03-11](https://github.blog/changelog/2024-03-11-secret-scanning-and-push-protection-are-enabled-by-default-on-new-public-repositories/) |
 | E9 | Current documentation contradicts E8 and O4. Repository push protection "Is disabled by default, and can be enabled by a repository administrator"; secret scanning and push protection "aren't enabled by default, even for public repositories" | [Push protection](https://docs.github.com/en/code-security/concepts/secret-security/push-protection), [Managing security and analysis settings](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-security-and-analysis-settings-for-your-repository) |
 | E10 | Push protection for users is a separate, per-account layer. It "Is enabled by default" and "Stops you from pushing secrets to public repositories on GitHub", "regardless of whether the repository itself has secret scanning enabled". Its effect on private repositories is not stated | [Push protection](https://docs.github.com/en/code-security/concepts/secret-security/push-protection), [GitHub changelog, 2024-02-29](https://github.blog/changelog/2024-02-29-push-protection-is-enabled-for-free-users-on-github/) |
 | E11 | Availability table: push protection "Yes" for a public repository and "No" for a private repository without GitHub Secret Protection | [About GitHub Advanced Security](https://docs.github.com/en/get-started/learning-about-github/about-github-advanced-security) |
 | E12 | GitHub documents a dummy value of type "GitHub Secret Scanning secret" for practising with push protection; its tutorial shows a block on a commit made in the web interface. The behaviour on a command-line push is not stated. "If a particular secret has already been detected in the repository and an alert already exists, GitHub will not block that secret." | [Storing your secrets safely](https://docs.github.com/en/get-started/learning-to-code/storing-your-secrets-safely), [Command-line push protection](https://docs.github.com/en/code-security/concepts/secret-security/command-line-push-protection) |
 | E13 | On a blocked command-line push, the remote output names the secret type and its location (commit, path and line), with a URL to unblock it. No error code for push protection is stated; `GH013` is documented only for ruleset violations | [Push protection on the command line](https://docs.github.com/en/code-security/how-tos/secure-your-secrets/work-with-leak-prevention/push-protection-on-the-command-line) |
+| E14 | Included usage for private repositories on GitHub Free: "$12 USD" per month. "The included compute usage is expressed as a monetary amount, not a fixed number of minutes or other usage units." | [GitHub Actions billing](https://docs.github.com/en/billing/concepts/product-billing/github-actions), section "Included compute usage and storage" |
+| E15 | Linux 2-core (x64) standard runner, SKU `actions_linux`: USD 0.006 per minute. The changelog of 2026-01-01 announces reduced runner prices from that date ("price reductions of up to 39%") and refers to the pricing page; it does not state the rate | [Actions runner pricing](https://docs.github.com/en/billing/reference/actions-runner-pricing), [GitHub changelog, 2026-01-01](https://github.blog/changelog/2026-01-01-reduced-pricing-for-github-hosted-runners-usage/) |
+| E16 | "GitHub rounds the minutes and partial minutes each job uses up to the nearest whole minute." | [Actions runner pricing](https://docs.github.com/en/billing/reference/actions-runner-pricing) |
+| E17 | Usage reports have `gross_amount`, `discount_amount` and `net_amount` fields. `discount_amount` "Also includes discounts for GitHub Actions usage for standard GitHub-hosted runners in public repositories and for self-hosted runners." The web view "Usage by repository" is not described on the pages read for E14–E17 | [Billing reports](https://docs.github.com/en/billing/reference/billing-reports) |
+| E18 | Workflow run usage endpoint (`GET …/actions/runs/{id}/timing`): "This endpoint is in the process of closing down." The changelog of 2025-02-02 places the closing down within "the ongoing transition of Enterprise customers and Team plan customers to our new billing platform" | [REST: workflow runs](https://docs.github.com/en/rest/actions/workflow-runs), [GitHub changelog, 2025-02-02](https://github.blog/changelog/2025-02-02-actions-get-workflow-usage-and-get-workflow-run-usage-endpoints-closing-down/) |
+| E19 | "If your account does not have a valid payment method on file, usage is blocked once you consume the included compute usage." | [GitHub Actions billing](https://docs.github.com/en/billing/concepts/product-billing/github-actions), section "Using more than your included compute usage" |
 
 Observation on E13 (P11): the error code `GH013` also appears for push protection, not only for rulesets. The blocked push reports `GH013: Repository rule violations found for refs/heads/pp/block`, followed by a "GITHUB PUSH PROTECTION" section.
 
@@ -171,13 +177,13 @@ Times in UTC.
 | V5 | 2026-11-25 | Deletion of `main` refused only as the default branch: "refusing to delete the current branch: refs/heads/main" | `git push` output |
 | V6 | 2026-11-25 23:08 | PR #1 from `fail/check`: check failed; `mergeStateStatus: UNSTABLE`, `mergeable: MERGEABLE`, `reviewRequests` empty; merged with the failing check (`e32763a`). `CODEOWNERS` present, no review required | `gh pr view --json`, `gh pr merge` |
 | V7 | 2026-11-25 | `PATCH` enabling push protection returned HTTP 200 without error, with no effect: the response showed `secret_scanning` disabled, and the read-back `security_and_analysis` is null. The HTTP status alone does not show whether a setting was applied | `gh api --include`, read-back |
-| V9 | 2026-11-25 | Five runs on the private repository, all on the workflow `check`: S2 push, V3 push, V4 push, V6 pull request (failure), V6 merge push. Job times 3, 3, 2, 5 and 2 s (15 s in total); run durations 5–8 s. The `timing` endpoint reports billable `total_ms: 0` for every run. Billing page row: PENDING (owner's reading) | `gh run list`, `gh run view --json jobs`, `GET …/actions/runs/{id}/timing` |
+| V9 | 2026-11-25 | Five runs on the private repository, all on the workflow `check`: S2 push, V3 push, V4 push, V6 pull request (failure), V6 merge push. Job times 3, 3, 2, 5 and 2 s (15 s in total); run durations 5–8 s. The `timing` endpoint reports billable `total_ms: 0` for every run. Public repository: seven runs with one job each (S2 push, P5 and P7 pull requests, P7 merge push, P8 push, P10 pull request, P10 merge push). Billing page, owner's reading on 2026-11-26 06:21 UTC, "Usage by repository" (gross amount): `dm-test-private` USD 0.03, `dm-test-public` USD 0.04. Private: USD 0.03 = 5 jobs × 1 minute × USD 0.006, consistent with the documented rounding and price (E15, E16); without rounding per job, 15 s would cost USD 0.0015. Public: 7 jobs × 1 minute × USD 0.006 = USD 0.042, shown as USD 0.04, so it matches; it is a gross amount, discounted for public repositories (E17). The amount alone does not fix the job count (6 jobs would also show USD 0.04); the run list does | `gh run list`, `gh run view --json jobs`, `GET …/actions/runs/{id}/timing`, owner's reading of the billing page |
 
 ## Results
 
 Tests run on 2026-11-25 (UTC). Every cell is tested unless it says otherwise.
 
-**Review with a single account (P10).** No setting imposes a review server side: with 0 required approvals, code-owner review does not block the merge; with 1 or more, the merge is blocked entirely, because the author cannot approve their own pull request. The owner's review remains a process step (§6.3).
+**Review with a single account (P10).** No setting imposes a review server side: with 0 required approvals, code-owner review does not block the merge; with 1 required approval, the merge is blocked entirely, because the author cannot approve their own pull request. The owner's review remains a process step (§6.3).
 
 | Capability | Public | Private | Evidence |
 |---|---|---|---|
@@ -196,11 +202,13 @@ Tests run on 2026-11-25 (UTC). Every cell is tested unless it says otherwise.
 | Push protection blocks the dummy value, both layers | Yes (`GH013`, "Push cannot contain secrets") | Not applicable | P11 |
 | Push protection blocks the dummy value, repository layer alone | Not tested, owner's decision | Not applicable | P12 |
 | Any push protection layer on a private repository | Not applicable | None: push accepted | V8 |
-| GitHub Actions usage | Free on standard runners (documented); `timing` endpoint billable 0 | 5 runs, 15 s of job time; `timing` endpoint billable 0; billing page row PENDING | E7, V9 |
+| GitHub Actions usage | Gross USD 0.04 for 7 jobs, discounted for public repositories (documented, E17); net amount not read | USD 0.03 from the included usage for 5 jobs: each job rounded up to 1 minute at USD 0.006. The `timing` endpoint reported billable 0 and is closing down (E18) | E14–E18, V9 |
 
 ## Implications for later phases
 
 - Phase 4, bootstrap: always read the state back after a change; HTTP 200 alone does not prove a setting was applied (V7).
 - Phase 4, output parsing: `GH013` is used for both ruleset violations and push protection (P11, note on E13).
+- Phase 4: the timing endpoint is closing down and reported billable 0; do not use it to measure cost (V9, E18).
+- Phase 4: on a private repository without a payment method, Actions stops when the included usage is consumed, including the secret-scanning job, the only remote defense (§6.4). Usage must be monitored, and a job that did not run is reported as incomplete coverage (E19).
 - Process: with a single account no review can be enforced server side; the owner's review remains a process step (P10, §6.3).
 - Specification: deviation D1 on §6.4, rules-only PR after the matrix is merged.
