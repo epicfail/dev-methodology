@@ -8,7 +8,7 @@ Status: non-normative planning document, subordinate to `docs/methodology/specif
 | --- | --- |
 | Stage 0 — repository bootstrap | Completed on 2026-11-24 (PRs #1–#3): public fork protected by a ruleset that applies to the owner too, upstream instructions neutralized, bootstrap contract in `AGENTS.md` |
 | Phase 0 — design closure | Completed on 2026-11-25: specification v5.1 frozen and added to the repository (PR #4) |
-| Phase 1 — fork and audit | In progress. Done: baseline tag `upstream-baseline` (`53af85eeff92a0f09d65c61dea159f1e8565c38e`); upstream inventory (`docs/audit/upstream-inventory.md`); GitHub Free capability matrix (`docs/audit/github-free-capabilities.md`, PR #9), with the specification corrections it required (PR #12). Remaining: skip-marker check, instruction loading in Claude Code and Codex, end-of-phase independent review |
+| Phase 1 — fork and audit | In progress. Done: baseline tag `upstream-baseline` (`53af85eeff92a0f09d65c61dea159f1e8565c38e`); upstream inventory (`docs/audit/upstream-inventory.md`); GitHub Free capability matrix (`docs/audit/github-free-capabilities.md`, PR #9), with the specification corrections it required (PR #12); skip-marker check (`docs/audit/skip-markers.md`). Remaining: skip-marker remedy in §6.4 (rules-only PR), instruction loading in Claude Code and Codex, end-of-phase independent review |
 
 ## Phases
 
