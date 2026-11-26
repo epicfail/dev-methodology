@@ -35,7 +35,7 @@ Read-only, 2026-11-25.
 
 ## Documented expectations
 
-E1–E13 read on 2026-11-25, E14–E19 on 2026-11-26. The pages show no last-updated date. Every quoted string was matched against the page text on the date of reading.
+E1–E13 read on 2026-11-25, E14–E21 on 2026-11-26. The pages show no last-updated date. Every quoted string was matched against the page text on the date of reading.
 
 | # | Statement | Source |
 |---|---|---|
@@ -58,6 +58,8 @@ E1–E13 read on 2026-11-25, E14–E19 on 2026-11-26. The pages show no last-upd
 | E17 | Usage reports have `gross_amount`, `discount_amount` and `net_amount` fields. `discount_amount` "Also includes discounts for GitHub Actions usage for standard GitHub-hosted runners in public repositories and for self-hosted runners." The web view "Usage by repository" is not described on the pages read for E14–E17 | [Billing reports](https://docs.github.com/en/billing/reference/billing-reports) |
 | E18 | Workflow run usage endpoint (`GET …/actions/runs/{id}/timing`): "This endpoint is in the process of closing down." The changelog of 2025-02-02 places the closing down within "the ongoing transition of Enterprise customers and Team plan customers to our new billing platform" | [REST: workflow runs](https://docs.github.com/en/rest/actions/workflow-runs), [GitHub changelog, 2025-02-02](https://github.blog/changelog/2025-02-02-actions-get-workflow-usage-and-get-workflow-run-usage-endpoints-closing-down/) |
 | E19 | "If your account does not have a valid payment method on file, usage is blocked once you consume the included compute usage." | [GitHub Actions billing](https://docs.github.com/en/billing/concepts/product-billing/github-actions), section "Using more than your included compute usage" |
+| E20 | Push protection for repositories: "by default, anyone with write access to the repository can bypass push protection by specifying a bypass reason." "When a contributor bypasses a push protection block, GitHub:" "Creates an alert in the Security and quality tab of the repository, organization, and enterprise" and "Adds the bypass event to the audit log". The default can be narrowed: "you can configure delegated bypass for push protection"; its availability for personal accounts is not stated. Push protection for users "Does not generate alerts when you bypass push protection unless push protection is also enabled at the repository level" | [Push protection](https://docs.github.com/en/code-security/concepts/secret-security/push-protection), sections "Push protection bypass and alerts" and "Push protection for users" |
+| E21 | Rulesets can be updated and deleted through the REST API ("Update a repository ruleset", "Delete a repository ruleset"); for both, "The fine-grained token must have the following permission set: "Administration" repository permissions (write)". A ruleset can also be disabled without deleting it: "Disabled: your ruleset will not be enforced." On a personal account: "Repositories owned by personal accounts have a single owner who has full control of the repository." Who may edit or delete a ruleset is not stated in these words | [REST: rules](https://docs.github.com/en/rest/repos/rules), [About rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets), [Permission levels for a personal account repository](https://docs.github.com/en/account-and-profile/reference/permission-levels-for-a-personal-account-repository) |
 
 Observation on E13 (P11): the error code `GH013` also appears for push protection, not only for rulesets. The blocked push reports `GH013: Repository rule violations found for refs/heads/pp/block`, followed by a "GITHUB PUSH PROTECTION" section.
 
@@ -132,20 +134,22 @@ Order: the owner reads the billing page (O6); S1–S3; P1–P11; V1–V9. After 
 ## Limits of the protocol
 
 - Single account: approval by a code owner other than the author cannot be tested. P10 proves only that the merge stays blocked without that approval. Accepted by the owner.
-- Push protection bypass is not tested, by the owner's decision. Its behaviour is documented only.
+- Push protection bypass is not tested, by the owner's decision. Its behaviour is documented only (E20).
 - P12 is not run, by the owner's decision. The P11 block therefore proves the combination of the two layers, not the repository layer alone. A contributor who turns off push protection for users relies on the repository layer only, which remains documented (E8, E11) but not tested.
 - If the P11 push is accepted, the dummy value has reached the public repository. Deleting the branch does not remove the commit, which can stay reachable by its SHA. The harm is nil, because the value is a public dummy, but an alert may be created, and an existing alert stops later blocks of the same value (E12). The outcome is recorded and the following push protection tests stop. Fallback, owner's decision: repeat the tutorial's web-interface commit (E12), or record push protection on command-line pushes as not proven.
 - P6 is a real admin-override attempt: if the expectation is wrong, it merges a pull request with a failing check into `main` of the test repository. The merge is recorded as the result.
 - The dummy value has a GitHub-specific type; recognition of real providers' formats, including AI credentials, belongs to phase 4.
 - Actions usage is read by the owner from the billing page; the token scopes stay unchanged. The page may show spend instead of minutes and may update with a delay.
 - The source of required status checks is not pinned (`integration_id` unset): that check belongs to phase 4.
-- The administrator can always change or delete a ruleset (§4.6, declared limits): not tested, because it is the documented behaviour of the role.
+- The administrator can modify a ruleset (tested: P8–P10) and delete or disable it (documented, E21; not tested, because it is the documented behaviour of the role) (§4.6, declared limits).
 
 ## Deviations from the specification
 
 | # | Section | Specification | Observed | Proposal |
 |---|---|---|---|---|
 | D1 | §6.4, secret control chain, step 2, public repository | Repository push protection "to enable at bootstrap (off by default)" | Enabled at creation without the owner's action (O4), as announced in E8 for new public repositories of personal accounts. Current documentation still says off by default (E9); repositories of organizations and existing repositories are not covered by E8 | After the matrix closes, a rules-only PR: verify at bootstrap, enable only if off |
+
+Resolution of D1: corrected in §6.4 by PR #12, merged on 2026-11-26. Step 2 for a public repository now reads "Check at bootstrap, enable if off and verify the resulting state". The observation and the proposal above are unchanged.
 
 ## Execution log
 
@@ -183,7 +187,7 @@ Times in UTC.
 
 Tests run on 2026-11-25 (UTC). Every cell is tested unless it says otherwise.
 
-**Review with a single account (P10).** No setting imposes a review server side: with 0 required approvals, code-owner review does not block the merge; with 1 required approval, the merge is blocked entirely, because the author cannot approve their own pull request. The owner's review remains a process step (§6.3).
+**Review with a single account (P10).** In the configurations tested, no setting imposed a review server side: with 0 required approvals, code-owner review does not block the merge; with 1 required approval, the merge is blocked entirely, because the author cannot approve their own pull request. The owner's review remains a process step (§6.3).
 
 | Capability | Public | Private | Evidence |
 |---|---|---|---|
@@ -210,5 +214,5 @@ Tests run on 2026-11-25 (UTC). Every cell is tested unless it says otherwise.
 - Phase 4, output parsing: `GH013` is used for both ruleset violations and push protection (P11, note on E13).
 - Phase 4: the timing endpoint is closing down and reported billable 0; do not use it to measure cost (V9, E18).
 - Phase 4: on a private repository without a payment method, Actions stops when the included usage is consumed, including the secret-scanning job, the only remote defense (§6.4). Usage must be monitored, and a job that did not run is reported as incomplete coverage (E19).
-- Process: with a single account no review can be enforced server side; the owner's review remains a process step (P10, §6.3).
-- Specification: deviation D1 on §6.4, rules-only PR after the matrix is merged.
+- Process: with a single account, no review was enforced server side in the configurations tested; the owner's review remains a process step (P10, §6.3).
+- Specification: deviation D1 on §6.4 and the other corrections required by this record were applied in PR #12.
