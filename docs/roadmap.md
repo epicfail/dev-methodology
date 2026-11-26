@@ -8,7 +8,7 @@ Status: non-normative planning document, subordinate to `docs/methodology/specif
 | --- | --- |
 | Stage 0 — repository bootstrap | Completed on 2026-11-24 (PRs #1–#3): public fork protected by a ruleset that applies to the owner too, upstream instructions neutralized, bootstrap contract in `AGENTS.md` |
 | Phase 0 — design closure | Completed on 2026-11-25: specification v5.1 frozen and added to the repository (PR #4) |
-| Phase 1 — fork and audit | In progress. Done: baseline tag `upstream-baseline` (`53af85eeff92a0f09d65c61dea159f1e8565c38e`); upstream inventory (`docs/audit/upstream-inventory.md`); GitHub Free capability matrix (`docs/audit/github-free-capabilities.md`, PR #9), with the specification corrections it required (PR #12); skip-marker check (`docs/audit/skip-markers.md`). Remaining: skip-marker remedy in §6.4 (rules-only PR), instruction loading in Claude Code and Codex, end-of-phase independent review |
+| Phase 1 — fork and audit | In progress. Done: baseline tag `upstream-baseline` (`53af85eeff92a0f09d65c61dea159f1e8565c38e`); upstream inventory (`docs/audit/upstream-inventory.md`); GitHub Free capability matrix (`docs/audit/github-free-capabilities.md`, PR #9), with the specification corrections it required (PR #12); skip-marker check (`docs/audit/skip-markers.md`, PR #15), with the remedy in §6.4 (PR #17). Remaining: instruction loading in Claude Code and Codex, end-of-phase independent review |
 
 ## Phases
 
@@ -20,7 +20,7 @@ Every phase has a verifiable exit criterion. References in brackets point to sec
 | **1. Fork and audit** | Know what exists and what the platform really offers | Baseline tag; classified inventory of the upstream repository; GitHub Free capability matrix tested on `epicfail/dm-test-public` and `epicfail/dm-test-private` (the public case is partly proven on the fork); loading of `AGENTS.md` and skills in Claude Code and Codex, with a canary rule (§7.5) in a clone of the public test repository; skip-marker check on the secret-scanning job and choice of the remedy | Phase 0 | Every element of the upstream repository classified; platform capabilities proven, not only read in the documentation; results recorded under `docs/audit/` |
 | **2. Repository structure** | Turn the three levels into files | Principles and catalogue (§2); short `AGENTS.md` pointing to the decisions file (§7.2); procedures as skills; decisions file schema v1 with validator (§4.4); Claude Code adapter only if needed (§7.3); distribution and versioning (inventory open point B2); language convention for distributed artifacts (B5) | Phase 1 | No reference to specific languages or tools in the core; the validator rejects invalid files |
 | **3. Classifier** | Compute profile and change level repeatably | Rust script for Linux (§3.6); rules table; scenario suite with counterexamples (§8.2) | Phases 0 and 2 | Scenario suite passes; every result states the decisive factors |
-| **4. Controls** | Make decisions binding | Local hooks; secret-scanning job on every push (§6.4); CI gate with one always-evaluated result and recomputation of the classification (§3.6, §6.2); integrity check from a trusted source (§4.6); push protection and Dependabot alerts; generated control summary; bootstrap command, including the initial-commit sequence without bypass (inventory B4); baseline for existing projects (§5.5) | Phases 2 and 3 | Deliberate bypass attempts tested and documented on a public and a private repository, including skipped or failed jobs, the secrets job and the identity of the integrity check |
+| **4. Controls** | Make decisions binding | Local hooks; push-triggered secret-scanning job, with the coverage and limits defined in §6.4; CI gate with one always-evaluated result and recomputation of the classification (§3.6, §6.2); integrity check from a trusted source (§4.6); push protection and Dependabot alerts; generated control summary; bootstrap command, including the initial-commit sequence without bypass (inventory B4); baseline for existing projects (§5.5) | Phases 2 and 3 | Deliberate bypass attempts tested and documented on a public and a private repository, including skipped or failed jobs, the secrets job and the identity of the integrity check |
 | **5. First tech package** | Apply the methodology to the first pilot's stack | Gate commands; independent verification of test effectiveness (for example mutation testing) with a declared selection level; alteration outcomes and "not verifiable" (§6.1); CI template for the stack | Phase 4; **Q16** | Test verification working on real changes in the stack, including "not verifiable" cases |
 | **6. Conversion and qualification** | Apply the methodology to this repository | This repository converted to the methodology; Claude Code and Codex qualified with observable evidence (§7.5) | Phases 4 and 5 | Repository converted; qualification outcomes recorded with agent versions |
 | **7. First pilot** | Test the full cycle on a real project | At least one real feature from request to merge; anomaly log; new scenarios from unexpected events | Phase 6; Q16 | **Milestone 1.0 experimental** (§8.1) |
@@ -40,6 +40,7 @@ The checks are spread over the phases that need them.
 | --- | --- |
 | GitHub Free capabilities on public and private repositories: branch protection, push protection, bypasses, `CODEOWNERS`, GitHub Actions included compute usage and billing | 1 |
 | Skip markers such as `[skip ci]` on the secret-scanning job; choice of the remedy | 1 |
+| Commit coverage of the secret-scanning job | 4 |
 | Loading of `AGENTS.md` and skills in Claude Code and Codex | 1 |
 | AI credential formats recognized by secret scanners, with synthetic credentials | 4 |
 | Dependabot alerts on a private repository | 4 |
@@ -75,7 +76,7 @@ The checks are spread over the phases that need them.
 
 | Candidate | Origin | Evaluate in |
 | --- | --- | --- |
-| `commit-msg` hook that rejects agent attribution lines | Agents add them by themselves; observed again in phase 1 | Phase 1, together with the skip-marker remedy |
+| `commit-msg` hook that rejects agent attribution lines | Agents add them by themselves; observed again in phase 1 | Phase 4, together with the design of the hooks (phase-1 data: `docs/audit/skip-markers.md`, H11a–H11e) |
 | `pre-push` hook that checks the identity of all pushed commits | The platform's email check covers only the last commit | Phase 4 |
 | Remote branch policy: delete after merge | Applied in stage 0 without a written rule | Phase 4 |
 | Check of the agent's permission mode at session start | An automatic mode stayed active in one session | Phase 6 |
