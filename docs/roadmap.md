@@ -8,7 +8,7 @@ Status: non-normative planning document, subordinate to `docs/methodology/specif
 | --- | --- |
 | Stage 0 — repository bootstrap | Completed on 2026-11-24 (PRs #1–#3): public fork protected by a ruleset that applies to the owner too, upstream instructions neutralized, bootstrap contract in `AGENTS.md` |
 | Phase 0 — design closure | Completed on 2026-11-25: specification v5.1 frozen and added to the repository (PR #4) |
-| Phase 1 — fork and audit | In progress. Done: baseline tag `upstream-baseline` (`53af85eeff92a0f09d65c61dea159f1e8565c38e`); upstream inventory (`docs/audit/upstream-inventory.md`). Remaining: GitHub Free capability matrix, skip-marker check, instruction loading in Claude Code and Codex |
+| Phase 1 — fork and audit | In progress. Done: baseline tag `upstream-baseline` (`53af85eeff92a0f09d65c61dea159f1e8565c38e`); upstream inventory (`docs/audit/upstream-inventory.md`); GitHub Free capability matrix (`docs/audit/github-free-capabilities.md`, PR #9), with the specification corrections it required (PR #12). Remaining: skip-marker check, instruction loading in Claude Code and Codex, end-of-phase independent review |
 
 ## Phases
 
@@ -38,7 +38,7 @@ The checks are spread over the phases that need them.
 
 | Check, by priority | Phase |
 | --- | --- |
-| GitHub Free capabilities on public and private repositories: branch protection, push protection, bypasses, `CODEOWNERS`, GitHub Actions minutes | 1 |
+| GitHub Free capabilities on public and private repositories: branch protection, push protection, bypasses, `CODEOWNERS`, GitHub Actions included compute usage and billing | 1 |
 | Skip markers such as `[skip ci]` on the secret-scanning job; choice of the remedy | 1 |
 | Loading of `AGENTS.md` and skills in Claude Code and Codex | 1 |
 | AI credential formats recognized by secret scanners, with synthetic credentials | 4 |
@@ -51,6 +51,7 @@ The checks are spread over the phases that need them.
 ## Reviews and approvals
 
 - **Independent reviews** (GPT-6, or an agent in a separate context): at the end of phase 1, on the inventory, the capability matrix and the loading tests; before the stable milestone, on a working implementation; and for every PR that changes control artifacts (§4.6).
+- After the phase-0 freeze, every rules-only PR that modifies the specification requires an independent review of its final diff and supporting evidence before merge. The end-of-phase review does not replace it.
 - Review prompts ask to separate problems demonstrable from the text from those that only a practical test can confirm, and to propose a concrete test for the latter.
 - The owner approves every merge and every change to this roadmap.
 
